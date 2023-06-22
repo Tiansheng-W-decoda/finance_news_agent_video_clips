@@ -1,4 +1,6 @@
 # Open Chat Video Editor
+## 参考 https://github.com/decoda-ai/news_agent/blob/main/open-chat-video-editor/README.md 进行第一步setup
+
 ## 简介
 Open Chat Video Editor是开源的短视频生成和编辑工具，整体技术框架如下：
 

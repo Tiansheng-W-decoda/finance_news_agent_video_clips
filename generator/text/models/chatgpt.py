@@ -24,8 +24,10 @@ class ChatGPTModel(object):
                  api_key,
                  ) -> None:
         self.cfg = cfg
-        openai.organization = organization
-        openai.api_key = api_key
+        # openai.organization = organization
+        # openai.api_key = api_key
+        openai.organization = os.getenv("OPENAI_ORG_ID")
+        openai.api_key = os.getenv("OPENAI_API_KEY")
         # ch_prompt = ''
     def run(self, input_text):
         contain_ch = False

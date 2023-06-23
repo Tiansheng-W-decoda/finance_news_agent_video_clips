@@ -32,6 +32,10 @@ class Text2VideoEditor(object):
             logger.info('zh_out_text: {}'.format(zh_out_text))
 
         en_out_text = [val['en'] for val in text_resp['out_text']]
+        if text_resp['out_subtitle'] is not None:
+            en_out_subtitle = [val['en'] for val in text_resp['out_subtitle']]
+        else:
+            en_out_subtitle = en_out_text
         # if 
         logger.info('en_out_text: {}'.format(en_out_text))
         # stylized text
@@ -44,7 +48,8 @@ class Text2VideoEditor(object):
             final_text = zh_out_text
         else:
             tts_in_text = en_out_text
-            sub_title_text = en_out_text
+            # sub_title_text = en_out_text
+            sub_title_text = en_out_subtitle
             final_text = en_out_text
             
         tts_resp = self.audio_generator.batch_run(tts_in_text)
@@ -63,7 +68,7 @@ class Text2VideoEditor(object):
             
             # text clip 
             if self.cfg.video_editor.subtitle.font:
-                text_clip = TextClip(one_text, font=self.cfg.video_editor.subtitle.font,fontsize=30, color='black')
+                text_clip = TextClip(one_text, font=self.cfg.video_editor.subtitle.font,fontsize=30, color='red')
             else:
                 text_clip = TextClip(one_text,fontsize=30, color='black')
                 

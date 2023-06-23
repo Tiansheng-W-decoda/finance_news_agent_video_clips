@@ -10,6 +10,10 @@ from PIL import Image
 from typing import List
 # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 from comm.mylog import logger
+
+from datetime import datetime
+from retry import retry
+
 def download_image(url):
     urllib_request = urllib.request.Request(
         url,
@@ -158,3 +162,71 @@ class ImageGenByRetrievalThenDiffusion(MediaGeneratorBase):
             img.save(local_img_path)
         return retrieval_resp_list
     
+class ImageGenByNews(MediaGeneratorBase):
+    '''
+    generate image by newsapi top_headlines
+    '''
+    def __init__(self, config, top_headlines):
+        self.limit = config.video_editor.text_gen.limit
+        self.urls = []
+        idx = 0
+        for news in top_headlines['articles']:
+            if idx == self.limit:
+                break
+
+            if news['description'] is None or news['content'] is None or news['urlToImage'] is None:
+                continue
+
+            if news['description'] == '' or news['content'] == '' or news['urlToImage'] == '':
+                continue
+            
+            self.urls.append(news['urlToImage'])
+            idx += 1
+        
+        self.tmp_dir = "./tmp/image"
+        self.data_type = "image"
+        if not os.path.exists(self.tmp_dir):
+            os.makedirs(self.tmp_dir)
+    
+
+    def batch_run(self,query:List):
+        resp = []
+        for url_id,url in enumerate(self.urls):
+            self.url_img_load(resp, url_id, url)
+            # try:
+            #     img_stream = download_image(url)
+            #     # try to open
+            #     url_md5 = self.get_url_md5(url)
+            #     timestamp = datetime.today().strftime('%Y%m%d%H%M%S')
+            #     img_tmp_name = os.path.join(self.tmp_dir, "{}_{}_{}.jpg".format(timestamp,url_id, url_md5))
+            #     logger.info('tmp img name: {}'.format(img_tmp_name))
+            #     img = Image.open(img_stream).convert('RGB')
+            #     img.save(img_tmp_name)
+            #     one_info = {'url':url,'topk_ids':url_id,'img_local_path':img_tmp_name,'data_type':self.data_type}
+            #     resp.append(one_info)
+                
+            # except Exception as e:
+            #     logger.error(e)
+            #     logger.error(traceback.format_exc())
+                    
+            #     continue
+        
+        return resp
+    
+    @retry(tries=3, delay=5)
+    def url_img_load(self, resp, url_id, url):
+        try:
+            img_stream = download_image(url)
+            # try to open
+            url_md5 = self.get_url_md5(url)
+            timestamp = datetime.today().strftime('%Y%m%d%H%M%S')
+            img_tmp_name = os.path.join(self.tmp_dir, "{}_{}_{}.jpg".format(timestamp,url_id, url_md5))
+            logger.info('tmp img name: {}'.format(img_tmp_name))
+            img = Image.open(img_stream).convert('RGB')
+            img.save(img_tmp_name)
+            one_info = {'url':url,'topk_ids':url_id,'img_local_path':img_tmp_name,'data_type':self.data_type}
+            resp.append(one_info)
+                
+        except Exception as e:
+            logger.error(e)
+            logger.error(traceback.format_exc())

@@ -1,0 +1,23 @@
+video_editor:
+  type: text2video
+
+  # visual
+  visual_gen:
+    type: image_by_news
+
+  # tts 
+  tts_gen:
+    model: PaddleSpeechTTS
+    am: tacotron2_ljspeech
+    voc: hifigan_ljspeech
+    lang: en
+
+  # subtitle 
+  subtitle:
+    font: DejaVu-Sans-Bold-Oblique
+    # font: 华文细黑
+  # text
+  text_gen:
+    type: newsapi
+    category: sports
+    limit: 5

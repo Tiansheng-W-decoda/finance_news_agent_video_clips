@@ -3,8 +3,10 @@ from comm.mylog import logger
 from generator.text.models.toy import EnToyTextGenModel, ZhToyTextGenModel,ZhToyURL2TextModel
 from generator.text.models.chatgpt import ChatGPTModel,URL2TextChatGPTModel
 
+from generator.text.models.newsapi import NewsapiTextModel
 
-def build_text_generator(cfg):
+
+def build_text_generator(cfg, top_headlines=None):
     text_gen_type = cfg.video_editor.text_gen.type
     logger.info('text_gen_type: {}'.format(text_gen_type))
     text_generator = None
@@ -14,6 +16,9 @@ def build_text_generator(cfg):
         text_generator = ZhToyTextGenModel()
     elif text_gen_type == "ZhToyURL2TextModel":
         text_generator = ZhToyURL2TextModel()
+    
+    elif text_gen_type == "newsapi":
+        text_generator = NewsapiTextModel(cfg, top_headlines)
         
     elif text_gen_type == "ChatGPTModel":
         organization = cfg.video_editor.text_gen.organization

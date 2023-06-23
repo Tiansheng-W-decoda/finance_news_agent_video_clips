@@ -9,6 +9,7 @@ def build_tts_generator(cfg):
         model = PaddleSpeechTTS(
                                 lang=cfg.video_editor.tts_gen.lang,
                                 am=cfg.video_editor.tts_gen.am,
+                                voc=cfg.video_editor.tts_gen.voc,
                                 )
         tts_generator = TTSGenerator(cfg,model)
     

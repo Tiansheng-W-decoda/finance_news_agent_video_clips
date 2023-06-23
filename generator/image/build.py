@@ -1,13 +1,13 @@
 # import logging
 from generator.image.retrieval.build import build_QueryTextEmbedServer,build_FiassKnnServer
 # from generator.image.generation.build import build_img_gen_model
-from generator.image.image_generator import ImageGenbyRetrieval,ImageGenByDiffusion,ImageGenByRetrievalThenDiffusion
+from generator.image.image_generator import ImageGenbyRetrieval,ImageGenByDiffusion,ImageGenByRetrievalThenDiffusion,ImageGenByNews
 from generator.comm.meta_sever import ImgMetaServer
 from generator.image.generation.build import build_img_gen_model,build_img2img_gen_model
 from comm.mylog import logger
 # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-def build_image_generator(cfg):
+def build_image_generator(cfg, top_headlines=None):
     '''
     所有的build的入参都是cfg对象
     '''
@@ -49,6 +49,9 @@ def build_image_generator(cfg):
         image_retrieval_generator = ImageGenbyRetrieval(cfg,query_model,index_server,meta_server)
         img2img_model = build_img2img_gen_model(cfg)
         image_generator = ImageGenByRetrievalThenDiffusion(cfg,image_retrieval_generator,img2img_model)
+    elif visual_gen_type == "image_by_news":
+        image_generator = ImageGenByNews(cfg, top_headlines)
+
     else:
         raise ValueError('visual_gen_type: {} not support'.format(visual_gen_type))
     return image_generator

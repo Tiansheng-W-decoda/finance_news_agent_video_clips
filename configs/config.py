@@ -50,6 +50,8 @@ _C.video_editor.text_gen = CN()
 _C.video_editor.text_gen.type = "toy"
 _C.video_editor.text_gen.organization = ""
 _C.video_editor.text_gen.api_key = ""
+_C.video_editor.text_gen.category = ""
+_C.video_editor.text_gen.limit = 5
 
 # tts 
 _C.video_editor.tts_gen = CN()
@@ -57,6 +59,7 @@ _C.video_editor.tts_gen.model = "PaddleSpeechTTS"
 # set am
 _C.video_editor.tts_gen.am = 'fastspeech2_mix'
 _C.video_editor.tts_gen.lang = 'mix'
+_C.video_editor.tts_gen.voc = 'hifigan_ljspeech'
 
 # subtitle
 _C.video_editor.subtitle = CN()
